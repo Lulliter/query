@@ -1,0 +1,18 @@
+---
+title: "OIS - Home"
+---
+
+## Welcome to OIS
+
+This is the home page of the OIS project.
+
+### About
+
+Add your project description here.
+
+### Data Structure
+
+This project uses data from:
+
+- `data_in/` - Input data directory
+- `data_out/` - Output data directory

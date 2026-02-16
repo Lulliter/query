@@ -1,0 +1,146 @@
+/* Custom styles for OIS website */
+/* Based on Parma theme color palette */
+
+/* ========== Google Fonts ========== */
+@import url('https://fonts.googleapis.com/css2?family=Lato:ital,wght@0,300;0,400;0,700;0,900;1,300;1,400;1,700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Overpass:wght@400;600;700;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Fira+Mono:wght@400;500;700&display=swap');
+
+/* ========== Color Variables ========== */
+:root {
+  /* Parma palette */
+  --blu-sc: #033c55;
+  --blu-md: #005d82;
+  --blu-lg: #5582a7;
+  --grn-sc: #246864;
+  --grn-md: #539d90;
+  --grn-lg: #8eb9b1;
+  --pur-sc: #553c64;
+  --pur-md: #805f95;
+  --pur-lg: #9a8da3;
+  --ylw-sc: #9f7d35;
+  --ylw-md: #d9b942;
+  --ylw-lg: #f7da7b;
+
+  /* Theme colors */
+  --theme-main-dark: #3E0E17;
+  --theme-main: #9b2339;
+  --theme-main-light: #D7A7B0;
+  --theme-main-extralight: #f5e9eb;
+
+  --textblue: #16222b;
+  --teal: #17717f;
+  --cream: #FDFBF7;
+  --gold: #7f6b00;
+
+  /* Override Bootstrap code color */
+  --bs-code-color: #17717f !important;
+}
+
+/* ========== Typography ========== */
+body {
+  font-family: "Lato", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  color: var(--textblue);
+}
+
+/* Inline code styling */
+code {
+  color: var(--teal) !important;
+}
+
+/* ========== Navbar ========== */
+.navbar {
+  font-family: "Overpass", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  background-color: var(--theme-main) !important;
+}
+
+.navbar-brand {
+  font-family: "Overpass", sans-serif;
+  font-size: 2rem;
+  font-weight: 900;
+  white-space: nowrap;
+  color: white !important;
+}
+
+.navbar a {
+  color: var(--theme-main-light) !important;
+}
+
+.navbar a:hover {
+  color: #ebd3d7 !important;
+  text-decoration: underline;
+}
+
+.navbar .dropdown-menu {
+  background-color: #6a5357;
+  padding: 10px;
+}
+
+.navbar .dropdown-menu a {
+  color: #f5d5db !important;
+}
+
+.navbar .dropdown-menu a:hover {
+  color: #536a65 !important;
+}
+
+/* Navbar toggler (hamburger menu) */
+.navbar-toggler {
+  border-color: rgba(255, 255, 255, 0.5) !important;
+}
+
+.navbar-toggler-icon {
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba%28255, 255, 255, 1%29' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e") !important;
+}
+
+/* ========== Footer ========== */
+.nav-footer {
+  background-color: #E1BDC4;
+}
+
+.footer {
+  background-color: #f8f9fa;
+}
+
+.footer p {
+  color: #6c757d;
+  font-size: 14px;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.footer a {
+  color: #007b83;
+  text-decoration: none;
+  font-weight: 500;
+}
+
+.footer a:hover {
+  color: var(--gold);
+  text-decoration: underline;
+}
+
+.footer a:active {
+  color: var(--gold);
+  text-decoration: none;
+}
+
+/* ========== Links ========== */
+a {
+  color: var(--blu-md);
+}
+
+a:hover {
+  color: var(--ylw-sc);
+}
+
+/* ========== Cards ========== */
+.card {
+  --bs-card-cap-bg: rgba(var(--bs-body-color-rgb), 0.03);
+  --bs-card-bg: var(--bs-body-bg);
+}

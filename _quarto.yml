@@ -1,0 +1,20 @@
+project:
+  type: website
+  output-dir: docs
+
+website:
+  title: "OIS"
+  navbar:
+    left:
+      - href: index.qmd
+        text: Home
+      - href: progetti_propri.qmd
+        text: Progetti Propri
+      - href: bandi.qmd
+        text: Bandi
+
+format:
+  html:
+    theme: cosmo
+    css: assets/styles.css
+    toc: true

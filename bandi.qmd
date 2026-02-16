@@ -1,0 +1,14 @@
+---
+title: "Bandi"
+---
+
+## Bandi
+
+Content for the Bandi page goes here.
+
+```{r}
+#| echo: false
+#| warning: false
+
+# Your R code here to analyze data from data_in/
+```
