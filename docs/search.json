@@ -1,0 +1,44 @@
+[
+  {
+    "objectID": "progetti_propri.html",
+    "href": "progetti_propri.html",
+    "title": "PP",
+    "section": "",
+    "text": "Content for the PP page goes here."
+  },
+  {
+    "objectID": "progetti_propri.html#pp-analysis",
+    "href": "progetti_propri.html#pp-analysis",
+    "title": "PP",
+    "section": "",
+    "text": "Content for the PP page goes here."
+  },
+  {
+    "objectID": "bandi.html",
+    "href": "bandi.html",
+    "title": "Bandi",
+    "section": "",
+    "text": "Content for the Bandi page goes here."
+  },
+  {
+    "objectID": "bandi.html#bandi",
+    "href": "bandi.html#bandi",
+    "title": "Bandi",
+    "section": "",
+    "text": "Content for the Bandi page goes here."
+  },
+  {
+    "objectID": "index.html",
+    "href": "index.html",
+    "title": "OIS - Home",
+    "section": "",
+    "text": "This is the home page of the OIS project.\n\n\nAdd your project description here.\n\n\n\nThis project uses data from:\n\ndata_in/ - Input data directory\ndata_out/ - Output data directory"
+  },
+  {
+    "objectID": "index.html#welcome-to-ois",
+    "href": "index.html#welcome-to-ois",
+    "title": "OIS - Home",
+    "section": "",
+    "text": "This is the home page of the OIS project.\n\n\nAdd your project description here.\n\n\n\nThis project uses data from:\n\ndata_in/ - Input data directory\ndata_out/ - Output data directory"
+  }
+]
