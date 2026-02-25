@@ -32,7 +32,7 @@ execute:
   error: false
   output: false
 
-bibliography: ../assets/OIS.bib
+bibliography: ../assets/CRP_query.bib
 suppress-bibliography: false
 ---
 
@@ -110,11 +110,11 @@ source(file = here("R", "f_recap_values.R")) # # f_recap_values(df, c("col1","co
 source(file = here("R", "f_ft_formatting.R")) # %>% f_ft_properties()
 ```
 
-# Importazione dati per Eval LAB calls  
+# Importazione dati Erogazioni 2024/2025
  
 Ho esportato da SIME facendo:
  + `Erogazioni -> Esportazioni su Excel -> Analisi Richieste ed Enti -> Esportazione Totale da Testata` 
- + unico filtro usato `2024` 
+ + unico filtro usato `2024` e `2025` 
 
 ```{bash}
 #| eval: false
@@ -134,6 +134,39 @@ all_2024 <- read_xls(here("SIME", "data_in", "all_2024.xls")) |>
   relocate('Descrizione Aggettivo', .after = 'Aggettivo')
 all_2025 <- read_xls(here("SIME", "data_in", "all_2025.xls")) |>
   relocate('Descrizione Aggettivo', .after = 'Aggettivo')
+
+# putting them together but make sure have the same columns with the same types (if not, can cause problems for the next steps)
+
+# Check which columns differ
+only_in_2024 <- setdiff(names(all_2024), names(all_2025))
+only_in_2025 <- setdiff(names(all_2025), names(all_2024))
+
+type_comparison <- tibble(
+  col = names(all_2024),
+  type_2024 = map_chr(all_2024, ~ class(.x)[1]),
+  type_2025 = map_chr(all_2025, ~ class(.x)[1])
+) |>
+  filter(type_2024 != type_2025)
+
+cols_to_fix <- c(
+  "Codice Fiscale",
+  "Natura Giuridica",
+  "Data Manifestaz.",
+  "Cod.Azione Mkt 1",
+  "Descrizione Azione Mkt 1",
+  "Richiesto il 6",
+  "Richiesto il 9",
+  "Richiesto il 10"
+)
+
+all_2024_2025 <- bind_rows(
+  all_2024 |> mutate(across(all_of(cols_to_fix), as.character), year = "2024"),
+  all_2025 |> mutate(across(all_of(cols_to_fix), as.character), year = "2025")
+)
+
+richieste <- all_2024_2025 |>
+  clean_names()
+
 ```
 
 ## Check variabili della tabella `all_2024`
@@ -156,41 +189,8 @@ check_empty <- tibble(
 )
 ```
 
+### LOOKUP TBLS
 ```{r}
-# ----- (prep)
-# get first non-NA value for each column
-examples <- all_2024 |>
-  map_chr(
-    ~ {
-      non_na <- na.omit(.x)
-      if (length(non_na) > 0) as.character(non_na[1]) else NA_character_
-    }
-  )
-
-# check if column is completely empty (all NA) in BOTH datasets
-is_empty <- names(all_2024) |>
-  map_chr(
-    ~ if_else(
-      all(is.na(all_2024[[.x]])) & all(is.na(all_2025[[.x]])),
-      "yes",
-      "no"
-    )
-  ) |>
-  set_names(names(all_2024))
-
-
-# ----- make a table with the columnns 1) var name, 2) var meaning, 3) unique ID (yes no) 4) dominon available (yes no) .... to be completed later
-var_desc_tbl <- all_2024 %>%
-  names() %>%
-  tibble(var_name = .) |>
-  mutate(
-    example = examples[var_name],
-    unique_id = NA_character_,
-    all_empty = is_empty[var_name],
-    var_desc = NA_character_,
-    lookup_table = NA_character_
-  )
-
 # lookup tables (named vectors)
 lookup_unique_id <- c(
   # "var_name" = "yes" or "no"
@@ -199,15 +199,99 @@ lookup_unique_id <- c(
 lookup_desc <- c(
   # "var_name" = "my description"
   "Aggettivo" = "?"
-  # add more here...
 )
 
-lookup_needs_table <- c(
-  # "var_name" = "yes" or "no" or "needed", etc
+lookup_useful <- c(
+  # PROGETTO
+  "Anno" = "yes",
+  "Anno Pratica" = "yes",
+  "Numero Pratica" = "yes",
+  "Titolo Progetto" = "yes",
+  "Cognome - Nome" = "yes",
+  "Categoria Fondo" = "yes",
+  "Fondo" = "yes",
+  "Descrizione Fondo" = "yes",
+  "Categoria Progetto" = "yes",
+  "Stato" = "yes",
+  "Descrizione Stato" = "yes",
+  "Inammis" = "yes",
+  "Analisi del contesto" = "yes",
+  "Strategia di intervento" = "yes",
+
+  "Sintesi Oggetto" = "yes",
+  "Descrizione Sintesi Oggetto" = "yes",
+
+  "Totale Deliberato" = "yes",
+  "Totale Erogato" = "yes",
+  "Totale Residuo" = "yes",
+
+  # ENTE
+  "L.R. Cognome" = "yes",
+  "L.R. Nome" = "yes",
+  "L.R. Email" = "yes",
+
+  "Inc.Ric Cognome" = "yes",
+  "Inc.Ric Nome" = "yes",
+  "Inc.Ric Email" = "yes",
+
+  # "var_name" = "yes" or "no" or "maybe"
+  "Codice Ente" = "yes",
+  "Denominazione Sociale" = "yes",
+  "Sito Web richiedente" = "yes",
+  "Data Creazione" = "yes",
+  "Indirizzo" = "yes",
+  "Località" = "yes",
+  "Quartiere" = "yes",
+  "Pv" = "yes",
+  "Cap" = "yes",
+  "Nazione" = "yes",
+  "Area" = "yes",
+  "Descrizione Area" = "yes",
+  "Zona" = "yes",
+  "Descrizione Zona" = "yes",
+
+  "Settore" = "yes",
+  "Descrizione Settore" = "yes",
+  "Categoria Settore" = "yes",
+
+  "Categoria" = "yes",
+  "Descrizione Categoria" = "yes",
+  "Categoria settore" = "yes",
+
+  "Natura Giuridica" = "yes",
+  "Descrizione Natura Giuridica" = "yes",
+  "Forma Giuridica" = "yes",
+  "Descrizione Forma Giuridica" = "yes",
+  "Scopo Ente" = "yes",
+  "Dati sull'Attività" = "yes",
+  "Organi" = "yes"
+)
+
+
+lookup_domain_tbl <- c(
+  # "var_name" =  "needed", etc
+  "Stato" = "needed",
+  "Descrizione Stato" = "needed",
+  "Categoria Fondo" = "needed",
+  "Fondo" = "needed",
+  "Descrizione Fondo" = "needed",
+
   "Aggregazione territoriale" = "needed",
   "Ambito" = "needed",
   "Descrizione Ambito" = "needed",
-  "Aggettivo" = "needed",
+
+  "Categoria" = "needed",
+  "Descrizione Categoria" = "needed",
+  "Settore" = "needed",
+  "Descrizione Settore" = "needed",
+  "Categoria Settore" = "needed",
+
+  "Inammis" = "needed",
+
+  "Zona" = "needed",
+  "Natura Giuridica" = "needed",
+  "Descrizione Natura Giuridica" = "needed",
+
   "Categoria Progetto" = "needed",
   "Codice Sottoprogetto" = "needed",
   "Tipo Progetto" = "needed",
@@ -215,7 +299,47 @@ lookup_needs_table <- c(
   "Descrizione Area" = "needed"
 )
 
-# apply lookups + pattern matching with case_when
+length(lookup_domain_tbl)
+
+```
+
+```{r}
+# ----- (prep)
+# get first non-NA value for each column
+examples <- all_2024_2025 |>
+  map_chr(
+    ~ {
+      non_na <- na.omit(.x)
+      if (length(non_na) > 0) as.character(non_na[1]) else NA_character_
+    }
+  )
+
+# check if column is completely empty (all NA) in BOTH datasets
+is_empty <- names(all_2024_2025) |>
+  map_chr(
+    ~ if_else(
+      all(is.na(all_2024_2025[[.x]])),
+      "yes",
+      "no"
+    )
+  ) |>
+  set_names(names(all_2024_2025))
+
+# ----- make a table with the columnns 1) var name, 2) var meaning, 3) unique ID (yes no) 4) dominon available (yes no) .... to be completed later
+var_desc_tbl <- all_2024_2025 %>%
+  names() %>%
+  tibble(var_name = .) |>
+  mutate(
+    example = examples[var_name],
+    all_empty = is_empty[var_name],
+    unique_id = NA_character_,
+    var_desc = NA_character_,
+    useful = NA_character_,
+    domain_tbl = NA_character_
+  )
+
+
+# ---- apply lookups + pattern matching with case_when
 var_desc_tbl <- var_desc_tbl |>
   mutate(
     var_desc = case_when(
@@ -223,18 +347,118 @@ var_desc_tbl <- var_desc_tbl |>
       !is.na(lookup_desc[var_name]) ~ lookup_desc[var_name],
       TRUE ~ var_desc
     ),
+    useful = coalesce(lookup_useful[var_name], useful),
     unique_id = coalesce(lookup_unique_id[var_name], unique_id),
-    lookup_table = coalesce(lookup_needs_table[var_name], lookup_table)
+    domain_tbl = coalesce(lookup_domain_tbl[var_name], domain_tbl)
   )
 
 ```
 
-## Variabili UTILI da esaminare 
+## [Tbl] Variabili 
 
-+ Indirizzo, localita, [Quartiere],  Pv, Cap, NAzione
-+ Email richiedente, Sito Web richiedente, 
+```{r}
+#| label: var_desc_tbl_ft
+#| output: true
 
-+ Categoria Descrizione Categoria ! 
+var_desc_tbl_ft <- var_desc_tbl %>%
+  flextable() %>%
+  # Segnalo se utili / approfondimenti necessari
+  bg(i = ~ useful == "yes", bg = grn_lg, part = "body") |>
+  # Segnalo se vuote
+  bg(
+    i = ~ all_empty == "yes",
+    j = c("var_name", "all_empty"),
+    bg = burg_lg,
+    part = "body"
+  ) |>
+  # Segnalo se serve tabella di dominio
+  bg(
+    i = ~ domain_tbl == "needed",
+    j = c("var_name", "domain_tbl"),
+    bg = blu_lg,
+    part = "body"
+  )
+
+var_desc_tbl_ft
+```
+
+## [Tbl] Variabili UTILI da esaminare 
+
+```{r}
+#| label: var_desc_tbl2_ft
+#| output: true
+
+var_desc_tbl2 <- var_desc_tbl %>%
+  select(-unique_id, -var_desc) |>
+  filter(useful == "yes") %>%
+  mutate(example = str_trunc(example, width = 150)) %>%
+  # mutate(var_name = factor(var_name, levels = names(lookup_useful)[lookup_useful == "yes"])) %>%
+  mutate(var_name = factor(var_name, levels = names(lookup_useful))) %>%
+  arrange(var_name)
+
+var_desc_tbl2_ft <- var_desc_tbl2 |>
+  flextable() %>%
+  # Segnalo se utili / approfondimenti necessari
+  bg(i = ~ useful == "yes", bg = grn_lg, part = "body") |>
+  # Segnalo se vuote
+  bg(
+    i = ~ all_empty == "yes",
+    j = c("var_name", "all_empty"),
+    bg = burg_lg,
+    part = "body"
+  ) |>
+  # Segnalo se serve tabella di dominio
+  bg(
+    i = ~ domain_tbl == "needed",
+    j = c("var_name", "domain_tbl"),
+    bg = blu_lg,
+    part = "body"
+  )
+
+var_desc_tbl2_ft
+
+# Save as docx table
+save_as_docx(
+  var_desc_tbl2_ft,
+  path = here("SIME", "data_out", "var_desc_tbl2.docx")
+)
+```
+
+# ____ 
+
+# Var PROGETTO
+
+## Tabelle di dominio
+
+```{r}
+#| label: domain_tbls
+
+# Get all vars that need domain table
+domain_vars_all <- names(lookup_domain_tbl)[lookup_domain_tbl == "needed"]
+domain_vars_exist <- domain_vars_all[domain_vars_all %in% names(all_2024_2025)]
+# order them according to var_desc_tbl2 (which is ordered according to lookup_useful)
+domain_vars_ordered <- intersect(var_desc_tbl2$var_name, domain_vars_exist)
+
+domain_tbls <- f_recap_values(all_2024_2025, domain_vars_ordered) |>
+  mutate(skim_variable = factor(skim_variable, levels = domain_vars_ordered)) |>
+  arrange(skim_variable)
+
+domain_tbls
+```
+
+ 
+
+```{r}
+richieste |> tabyl(categoria_fondo)
+
+richieste |> tabyl(fondo)
+richieste |> tabyl(descrizione_fondo)
+fondo <- richieste |> tabyl(fondo, descrizione_fondo)
+
+```
+
+
+
 
 ## Domande per Area Erogativa
 
@@ -246,7 +470,7 @@ var_desc_tbl <- var_desc_tbl |>
 
 + Variabili sempre vuote:
   + xchè `Indirizzo fiscale`, `Aggregazione territoriale`, `Ambito` e `Descrizione Ambito`, `Codice Sottoprogetto`, `Categoria Progetto`, `Tipo Progetto` sono sempre vuote? 
-    + ( `Ambito` ~ nel senso del PS o altro?)
+    + ( `Ambito` ~nel senso del PS o altro?)
   + xchè tutte vuote?  
 
 + `Area` a cosa è riferito: ENTE; PROGETTO, BANCA? 

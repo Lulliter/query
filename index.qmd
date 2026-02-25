@@ -32,7 +32,7 @@ execute:
   error: false
   output: false
 
-bibliography: assets/OIS.bib
+bibliography: assets/CRP_query.bib
 suppress-bibliography: false
 ---
 
