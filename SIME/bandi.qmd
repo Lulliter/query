@@ -130,14 +130,20 @@ cp "$SRC/all_2025.xls" './data_in/'
 
 ```{r}
 #| label: from_WIN_SIME
+#| eval: false
 
-# /Users/luisamimmi/Documents/2025_Cariparma/query_FROM_SIME
-dir_path <- fs::path_expand("~/Documents/2025_Cariparma/query_FROM_SIME")
+# solo in ufficio!!!! 
 
-# --- 1) COPY content in path TO current project FOLDER SIME/data_in/*  
-fs::dir_copy(dir_path, here("SIME", "data_in"), overwrite = TRUE)
+# # /Users/luisamimmi/Documents/2025_Cariparma/query_FROM_SIME
+# dir_path <- fs::path_expand("~/Documents/2025_Cariparma/query_FROM_SIME")
+# 
+# 
+# # --- 1) COPY content in path TO current project FOLDER SIME/data_in/*  
+# fs::dir_copy(dir_path, here("SIME", "data_in"), overwrite = TRUE)
+```
 
-# --- 2) Ingest xls file sheet 1 (read all as text first)
+```{r}
+#--- 2) Ingest xls file sheet 1 (read all as text first)
 all_2024_2026_raw <- read_xls(here("SIME", "data_in", "mimmi_bnxlstot.xls"),
                               sheet = 1,
                               col_types = "text")
@@ -180,10 +186,8 @@ names(all_2024_2026)
 types_all_2024_2026 <- all_2024_2026 %>%
   map_chr(~ class(.x)[1]) %>%
   set_names(names(all_2024_2026))
-
 ```
-
-
+ 
 ## Check variabili della tabella `all_2024_2026`
 ```{r}
 # check variables completely empty in BOTH datasets
@@ -486,7 +490,38 @@ rec_domain_tbls <- f_recap_values(all_2024_2026, domain_vars_ordered) |>
 rec_domain_tbls
 ```
 
- 
+### Forma giuridica
+```{r}
+table(richieste_24_26$forma_giuridica, useNA = "ifany") |> 
+  as.data.frame() |>
+  filter(Freq > 0) |> 
+  arrange(desc(Freq))
+
+table(richieste_24_26$descrizione_forma_giuridica, useNA = "ifany") |> 
+  as.data.frame() |>
+  filter(Freq > 0) |> 
+  arrange(desc(Freq))
+
+table(richieste_24_26$natura_giuridica, useNA = "ifany") |> 
+  as.data.frame() |>
+  filter(Freq > 0) |> 
+  arrange(desc(Freq))
+
+table(richieste_24_26$descrizione_natura_giuridica, useNA = "ifany") |> 
+  as.data.frame() |>
+  filter(Freq > 0) |> 
+  arrange(desc(Freq))
+```
+
+### Descrizione
+
+```{r}
+table(richieste_24_26$, useNA = "ifany") |> 
+  as.data.frame() |>
+  filter(Freq > 0) |> 
+  arrange(desc(Freq))
+```
+
 
 ## Var sempre vuote o quasi vuote
 
